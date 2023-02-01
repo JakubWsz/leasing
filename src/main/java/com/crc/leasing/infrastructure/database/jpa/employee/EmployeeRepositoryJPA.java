@@ -10,7 +10,4 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.Optional;
 
 public interface EmployeeRepositoryJPA extends JpaRepository<EmployeeDAO,Long>, JpaSpecificationExecutor<EmployeeDAO> {
-    Optional<EmployeeDAO> findByDomainId(String domainId);
-
-    Page<EmployeeDAO>getEmployeeDAOSByOfficeId(String officeId, Pageable pageable, EmployeeSpecification specification);
 }

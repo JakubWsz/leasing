@@ -11,19 +11,10 @@ import java.time.LocalDate;
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Client {
-    final String domainId;
+    final String uuid;
     final String firstname;
     final String lastname;
-    String email;
-    String password;
+    final String email;
     final LocalDate birthdate;
     boolean deleted;
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

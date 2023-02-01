@@ -13,7 +13,7 @@ import lombok.experimental.FieldDefaults;
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Car {
-    final String domainId;
+    final String uuid;
     final String brand;
     final String model;
     final CarType carType;

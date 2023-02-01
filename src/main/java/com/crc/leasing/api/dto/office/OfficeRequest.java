@@ -17,6 +17,10 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OfficeRequest {
+    @NotNull(message = "Pole z identyfikatorem nie może być puste.")
+    @NotEmpty(message = "Pole z identyfikatorem nie może być puste.")
+    @NotBlank(message = "Pole z identyfikatorem nie może być puste.")
+    String uuid;
     @NotNull(message = "Adres nie może być pusty.")
     @Valid
     AddressDto addressDto;

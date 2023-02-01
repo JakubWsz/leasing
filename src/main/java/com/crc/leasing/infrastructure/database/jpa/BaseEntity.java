@@ -2,8 +2,10 @@ package com.crc.leasing.infrastructure.database.jpa;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
@@ -12,6 +14,7 @@ import java.util.UUID;
 
 @MappedSuperclass
 @ToString
+@Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BaseEntity {
     @Id
@@ -22,7 +25,10 @@ public class BaseEntity {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "uuid", columnDefinition = "BINARY(16)", unique = true)
     private UUID uuid;
+
     LocalDateTime modificationDate;
+
+    @Column(nullable = false)
     boolean deleted;
 
     public boolean isDeleted() {
@@ -37,23 +43,16 @@ public class BaseEntity {
         this.deleted = deleted;
     }
 
-    public void updateObject(Long id) {
-        this.id = id;
-        this.modificationDate = LocalDateTime.now();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         BaseEntity that = (BaseEntity) o;
-        return Objects.equals(id, that.id)
-                && deleted == that.deleted
-                && Objects.equals(modificationDate, that.modificationDate);
+        return id != null && Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, modificationDate, deleted);
+        return getClass().hashCode();
     }
 }

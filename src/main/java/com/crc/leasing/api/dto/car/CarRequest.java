@@ -16,6 +16,10 @@ import lombok.experimental.FieldDefaults;
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CarRequest {
+    @NotNull(message = "Pole z identyfikatorem nie może być puste.")
+    @NotEmpty(message = "Pole z identyfikatorem nie może być puste.")
+    @NotBlank(message = "Pole z identyfikatorem nie może być puste.")
+    String uuid;
     @NotNull(message = "Pole z marką nie może być puste.")
     @NotEmpty(message = "Pole z marką nie może być puste.")
     @NotBlank(message = "Pole z marką nie może być puste.")

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
-public record OfficeResponse(@NotNull @NotEmpty @NotBlank String id, @NotNull AddressDto addressDTO,
-                             @NotNull @NotEmpty @NotBlank String websiteURL,
-                             @NotNull @NotEmpty @NotBlank String officeCEO) {
+public record OfficeResponse(@NotNull @NotEmpty @NotBlank String uuid, @NotNull AddressDto addressDto,
+                             @NotNull @NotEmpty @NotBlank String websiteUrl,
+                             @NotNull @NotEmpty @NotBlank String officeCeo) {
 }

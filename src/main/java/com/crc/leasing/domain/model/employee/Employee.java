@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Employee {
-    final String domainId;
+    final String uuid;
     final String firstname;
     final String lastname;
     final Address address;
