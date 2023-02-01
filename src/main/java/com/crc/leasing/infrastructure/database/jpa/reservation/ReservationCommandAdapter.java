@@ -6,18 +6,20 @@ import com.crc.leasing.infrastructure.mapper.DaoMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@Slf4j
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ReservationCommandAdapter implements ReservationCommand {
-    final ReservationCommandDAO rcr;
-    final DaoMapper daoMapper;
+    ReservationCommandDAO rcr;
+    DaoMapper daoMapper;
 
     @Override
     public Reservation save(Reservation reservation) {
-        ReservationDAO reservationDAO = daoMapper.mapToReservationDao(reservation);
+        ReservationDAO reservationDAO = daoMapper.mapToReservationDAO(reservation);
         return daoMapper.mapToReservation(rcr.save(reservationDAO));
     }
 }

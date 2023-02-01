@@ -19,7 +19,7 @@ public interface DaoMapper {
 
     @Mapping(target = "deleted", source = "deleted")
     @Mapping(target = "clientDAO", source = "client")
-    ReservationDAO mapToReservationDao(Reservation reservation);
+    ReservationDAO mapToReservationDAO(Reservation reservation);
 
     @Mapping(target = "client", source = "clientDAO")
     @Mapping(target = "car", source = "carDAO")
@@ -29,4 +29,6 @@ public interface DaoMapper {
     Office mapToOffice(OfficeDAO officeDAO);
 
     Car mapToCar(CarDAO carDAO);
+
+    CarDAO mapToCarDAO(Car car);
 }
