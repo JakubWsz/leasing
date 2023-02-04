@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Office {
-    final String domainId;
+    final String uuid;
     final Address address;
     final String websiteUrl;
     final String officeCeo;

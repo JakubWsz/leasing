@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.Hibernate;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -20,20 +21,18 @@ public class ClientDAO extends BaseEntity {
     String firstname;
     String lastname;
     String email;
-    String password;
     LocalDate birthdate;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        ClientDAO client = (ClientDAO) o;
-        return Objects.equals(firstname, client.firstname) && Objects.equals(lastname, client.lastname) && Objects.equals(email, client.email) && Objects.equals(password, client.password) && Objects.equals(birthdate, client.birthdate);
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        ClientDAO clientDAO = (ClientDAO) o;
+        return getId() != null && Objects.equals(getId(), clientDAO.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), firstname, lastname, email, password, birthdate);
+        return getClass().hashCode();
     }
 }
