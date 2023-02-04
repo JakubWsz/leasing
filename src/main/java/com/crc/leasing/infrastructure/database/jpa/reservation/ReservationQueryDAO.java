@@ -16,4 +16,7 @@ public interface ReservationQueryDAO extends JpaRepository<OfficeDAO, Long> {
     List<ReservationDAO> getReservationsByStartAndEndDatesAndCar(
             LocalDateTime startDate, LocalDateTime endDate, CarDAO car
     );
+
+    @Query("SELECT r.date FROM ReservationDAO r WHERE r.carDAO.id = :carId AND r.date IS NULL")
+    List<LocalDateTime> getFreeDatesForCar(CarDAO carDAO);
 }

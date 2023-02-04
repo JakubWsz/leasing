@@ -24,4 +24,8 @@ public class ReservationQueryService {
     ) {
         return reservationQuery.getReservationsByStartAndEndDatesAndCar(startDate, endDate, car);
     }
+
+    public List<LocalDateTime> getFreeDatesForCar(Car car){
+       return reservationQuery.getFreeDatesForCar(car);
+    }
 }

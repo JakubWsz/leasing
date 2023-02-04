@@ -35,4 +35,9 @@ public class ReservationQueryAdapter implements ReservationQuery {
                 .map(daoMapper::mapToReservation)
                 .toList();
     }
+
+    @Override
+    public List<LocalDateTime> getFreeDatesForCar(Car car) {
+        return reservationQueryDAO.getFreeDatesForCar(daoMapper.mapToCarDAO(car));
+    }
 }

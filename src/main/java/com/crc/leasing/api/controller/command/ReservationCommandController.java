@@ -3,7 +3,7 @@ package com.crc.leasing.api.controller.command;
 import com.crc.leasing.api.dto.reservation.ReservationRequest;
 import com.crc.leasing.api.dto.reservation.ReservationResponse;
 import com.crc.leasing.domain.model.reservation.Reservation;
-import com.crc.leasing.domain.service.command.ReservationCommandService;
+import com.crc.leasing.infrastructure.database.jpa.reservation.ReservationCommandHandler;
 import com.crc.leasing.infrastructure.mapper.DtoMapper;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -22,12 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ReservationCommandController {
-    ReservationCommandService reservationCommandService;
+
+    ReservationCommandHandler reservationCommandHandler;
     DtoMapper dtoMapper;
 
     @PostMapping
     public ResponseEntity<ReservationResponse> createReservation(@RequestBody @Valid ReservationRequest request) {
-        Reservation reservation = reservationCommandService.createReservation(
+        Reservation reservation = reservationCommandHandler.handle(
                 dtoMapper.mapToClient(request.getClient()),
                 dtoMapper.mapToOffice(request.getReceipt()),
                 dtoMapper.mapToOffice(request.getRestoration()),

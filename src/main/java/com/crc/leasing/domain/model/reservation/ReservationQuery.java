@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ReservationQuery {
     List<Reservation> getReservationsByStartAndEndDatesAndCar(LocalDateTime startDate, LocalDateTime endDate, Car car);
+
+    List<LocalDateTime> getFreeDatesForCar(Car car);
 }

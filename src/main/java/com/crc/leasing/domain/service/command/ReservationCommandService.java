@@ -5,8 +5,9 @@ import com.crc.leasing.domain.model.client.Client;
 import com.crc.leasing.domain.model.employee.Employee;
 import com.crc.leasing.domain.model.office.Office;
 import com.crc.leasing.domain.model.reservation.Reservation;
-import com.crc.leasing.domain.model.reservation.ReservationCommand;
 import com.crc.leasing.domain.service.query.ReservationQueryService;
+import com.crc.leasing.infrastructure.database.jpa.reservation.ReservationCommandDAO;
+import com.crc.leasing.infrastructure.mapper.DaoMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,7 +23,9 @@ import java.util.List;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ReservationCommandService {
-    ReservationCommand reservationCommand;
+    DaoMapper daoMapper;
+    // TODO: 04.02.2023 proxy
+    ReservationCommandDAO reservationCommandDAO;
     ReservationQueryService reservationQueryService;
 
     public Reservation createReservation(Client client, Office receipt, Office restoration, Car car,
@@ -33,9 +36,11 @@ public class ReservationCommandService {
         // TODO: 01.02.2023 stwórz metodę obliczającą cene wynajmu
         BigDecimal price = null;
 
-        return reservationCommand.save(
-                new Reservation(client, receipt, restoration, car, start, end, loaner, receiver, price)
-        );
+        return daoMapper.mapToReservation(reservationCommandDAO.save(
+                daoMapper.mapToReservationDAO(
+                        new Reservation(client, receipt, restoration, car, start, end, loaner, receiver, price)
+                )
+        ));
     }
 
     private void validateRentDate(LocalDateTime start, LocalDateTime end, Car car) {
