@@ -26,4 +26,8 @@ public class CarQueryService {
     public Page<Car> getCars(Pageable pageable) {
         return carQuery.getCars(pageable);
     }
+
+    public Car getCarByUuid(String uuid){
+        return carQuery.getCarByUuid(uuid);
+    }
 }

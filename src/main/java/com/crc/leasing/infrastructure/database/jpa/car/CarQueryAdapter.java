@@ -2,6 +2,7 @@ package com.crc.leasing.infrastructure.database.jpa.car;
 
 import com.crc.leasing.domain.model.car.Car;
 import com.crc.leasing.domain.model.car.CarQuery;
+import com.crc.leasing.infrastructure.database.exception.DbExceptionCode;
 import com.crc.leasing.infrastructure.mapper.DaoMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -35,5 +36,9 @@ public class CarQueryAdapter implements CarQuery {
                 .map(daoMapper::mapToCar);
     }
 
-
+    @Override
+    public Car getCarByUuid(String uuid) {
+        return daoMapper.mapToCar(carQueryDAO.findByUuid(uuid)
+                .orElseThrow(DbExceptionCode.CAR_NOT_EXISTS::createException));
+    }
 }

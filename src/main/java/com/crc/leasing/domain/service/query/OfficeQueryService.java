@@ -1,6 +1,5 @@
 package com.crc.leasing.domain.service.query;
 
-import com.crc.leasing.domain.model.car.Car;
 import com.crc.leasing.domain.model.office.Office;
 import com.crc.leasing.domain.model.office.OfficeQuery;
 import lombok.AccessLevel;
@@ -20,11 +19,15 @@ import java.util.List;
 public class OfficeQueryService {
     OfficeQuery officeQuery;
 
-    public List<Office> getCars() {
+    public List<Office> getOffices() {
         return officeQuery.getOffices();
     }
 
-    public Page<Office> getCars(Pageable pageable) {
+    public Page<Office> getOffices(Pageable pageable) {
         return officeQuery.getOffices(pageable);
+    }
+
+    public Office getOfficeByUuid(String uuid) {
+        return officeQuery.findByUuid(uuid);
     }
 }

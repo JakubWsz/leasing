@@ -6,11 +6,9 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.UUID;
 
 @MappedSuperclass
 @ToString
@@ -18,18 +16,23 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "idGeneratorSeq", sequenceName = "idSequence")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "idGeneratorSeq")
+    @Column(name = "id")
     Long id;
 
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "uuid", columnDefinition = "BINARY(16)", unique = true)
-    private UUID uuid;
+    @Column(name = "uuid")
+    protected String uuid;
 
+    @Column(name = "modification_date")
     LocalDateTime modificationDate;
 
-    @Column(nullable = false)
+    @Column(name = "deleted",nullable = false)
     boolean deleted;
+
+    public String getUuid() {
+        return uuid;
+    }
 
     public boolean isDeleted() {
         return deleted;
@@ -41,6 +44,10 @@ public class BaseEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    protected void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     @Override

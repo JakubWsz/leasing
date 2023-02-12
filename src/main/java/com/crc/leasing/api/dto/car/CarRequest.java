@@ -41,5 +41,5 @@ public class CarRequest {
     @NotNull(message = "Pole z identyfikatorem biura nie może być puste.")
     @NotEmpty(message = "Pole z identyfikatorem biura nie może być puste.")
     @NotBlank(message = "Pole z identyfikatorem biura nie może być puste.")
-    String officeId;
+    String officeUuid;
 }

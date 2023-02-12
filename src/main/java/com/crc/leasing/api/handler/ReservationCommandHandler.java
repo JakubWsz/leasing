@@ -1,9 +1,5 @@
-package com.crc.leasing.infrastructure.database.jpa.reservation;
+package com.crc.leasing.api.handler;
 
-import com.crc.leasing.domain.model.car.Car;
-import com.crc.leasing.domain.model.client.Client;
-import com.crc.leasing.domain.model.employee.Employee;
-import com.crc.leasing.domain.model.office.Office;
 import com.crc.leasing.domain.model.reservation.Reservation;
 import com.crc.leasing.domain.service.command.ReservationCommandService;
 import lombok.AccessLevel;
@@ -11,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
@@ -21,10 +18,12 @@ import java.time.LocalDateTime;
 public class ReservationCommandHandler {
     ReservationCommandService reservationCommandService;
 
-    public Reservation handle(Client client, Office receipt, Office restoration, Car car,
-                              LocalDateTime start, LocalDateTime end, Employee loaner, Employee receiver) {
+    public Mono<Reservation> handle(
+            String clientUuid, String receiptOfficeUuid, String restorationOfficeUuid, String carUuid,
+            LocalDateTime start, LocalDateTime end, String loanerEmployeeUuid, String receiverEmployeeUuid
+    ) {
         return reservationCommandService.createReservation(
-                client, receipt, restoration, car, start, end, loaner, receiver
+                clientUuid, receiptOfficeUuid, restorationOfficeUuid, carUuid, start, end, loanerEmployeeUuid, receiverEmployeeUuid
         );
     }
 }

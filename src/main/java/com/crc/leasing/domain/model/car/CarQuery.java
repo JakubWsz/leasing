@@ -9,4 +9,6 @@ public interface CarQuery {
     List<Car> getCars();
 
     Page<Car> getCars(Pageable pageable);
+
+    Car getCarByUuid(String uuid);
 }
