@@ -1,6 +1,5 @@
 package com.crc.leasing.api.controller.query;
 
-import com.crc.leasing.api.dto.car.CarResponse;
 import com.crc.leasing.api.dto.office.OfficeResponse;
 import com.crc.leasing.domain.service.query.OfficeQueryService;
 import com.crc.leasing.infrastructure.mapper.DtoMapper;
@@ -28,7 +27,7 @@ public class OfficeQueryController {
 
     @GetMapping
     public ResponseEntity<List<OfficeResponse>> getCars() {
-        List<OfficeResponse> cars = officeQueryService.getCars().stream()
+        List<OfficeResponse> cars = officeQueryService.getOffices().stream()
                 .map(dtoMapper::mapToOfficeResponse)
                 .toList();
         log.info("cars list retrieved");
@@ -37,7 +36,7 @@ public class OfficeQueryController {
 
     @GetMapping("/paged")
     public ResponseEntity<Page<OfficeResponse>> getCars(Pageable pageable) {
-        Page<OfficeResponse> cars = officeQueryService.getCars(pageable)
+        Page<OfficeResponse> cars = officeQueryService.getOffices(pageable)
                 .map(dtoMapper::mapToOfficeResponse);
         log.info("cars list retrieved");
         return ResponseEntity.ok(cars);

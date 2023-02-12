@@ -1,13 +1,10 @@
 package com.crc.leasing.api.dto.reservation;
 
-import com.crc.leasing.api.dto.car.CarRequest;
-import com.crc.leasing.api.dto.client.ClientRequest;
-import com.crc.leasing.api.dto.employee.EmployeeRequest;
-import com.crc.leasing.api.dto.office.OfficeRequest;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.crc.leasing.api.dto.car.CarResponse;
+import com.crc.leasing.api.dto.client.ClientResponse;
+import com.crc.leasing.api.dto.employee.EmployeeResponse;
+import com.crc.leasing.api.dto.office.OfficeResponse;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
@@ -15,15 +12,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ReservationResponse {
     String uuid;
-    ClientRequest client;
-    OfficeRequest receipt;
-    OfficeRequest restoration;
-    CarRequest car;
+    ClientResponse client;
+    OfficeResponse receipt;
+    OfficeResponse restoration;
+    CarResponse car;
     LocalDateTime startDate;
     LocalDateTime endDate;
-    EmployeeRequest loaner;
-    EmployeeRequest receiver;
+    EmployeeResponse loaner;
+    EmployeeResponse receiver;
 }

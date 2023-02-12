@@ -10,4 +10,6 @@ public interface OfficeQuery {
     List<Office> getOffices();
 
     Page<Office> getOffices(Pageable pageable);
+
+    Office findByUuid(String uuid);
 }

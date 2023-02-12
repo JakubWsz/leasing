@@ -13,17 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Reservation {
-    String uuid;
-    final Client client;
-    final Office receipt;
-    final Office restoration;
-    final Car car;
-    final LocalDateTime startDate;
-    final LocalDateTime endDate;
-    final Employee loaner;
-    final Employee receiver;
-    final BigDecimal price;
-    LocalDateTime modificationDate;
-    boolean deleted;
+public record Reservation(String uuid, Client client, Office receipt, Office restoration, Car car,
+                          LocalDateTime startDate, LocalDateTime endDate, Employee loaner, Employee receiver,
+                          BigDecimal price) {
 }

@@ -26,10 +26,17 @@ import org.mapstruct.ReportingPolicy;
 )
 public interface DtoMapper {
 
-    ReservationResponse mapToReservationResponse(Reservation reservation);
+//    ReservationResponse mapToReservationResponse(Reservation reservation);
 
-    @Mapping(target = "price", constant = "null")
-    Reservation mapToReservation(ReservationRequest reservationRequest);
+//    @Mapping(target = "price", constant = "null")
+//    @Mapping(target = "uuid", constant = "uuid")
+//    @Mapping(target = "client", source = "client")
+//    @Mapping(target = "receipt", source = "receipt")
+//    @Mapping(target = "restoration", source = "restoration")
+//    @Mapping(target = "car", source = "car")
+//    @Mapping(target = "loaner", source = "loaner")
+//    @Mapping(target = "receiver", source = "receiver")
+//    Reservation mapToReservation(ReservationRequest reservationRequest);
 
 
     @Mapping(target = "deleted", constant = "false")
@@ -42,14 +49,16 @@ public interface DtoMapper {
     @Mapping(target = "addressDto", source = "address")
     OfficeResponse mapToOfficeResponse(Office office);
 
-    @Mapping(target = "deleted", constant = "false")
-    Car mapToCar(CarRequest carRequest);
+//    @Mapping(target = "deleted", constant = "false")
+//    @Mapping(source = "officeU", target = "office")
+//    Car mapToCar(CarRequest carRequest);
 
+    @Mapping(source = "office.uuid", target = "officeUuid")
     CarResponse mapToCarResponse(Car car);
 
-    @Mapping(target = "address", source = "addressDto")
-    @Mapping(target = "deleted", constant = "false")
-    Employee mapToEmployee(EmployeeRequest employeeRequest);
+//    @Mapping(target = "address", source = "addressDto")
+//    @Mapping(target = "deleted", constant = "false")
+//    Employee mapToEmployee(EmployeeRequest employeeRequest);
 
     Address mapToAddress(AddressDto addressDto);
 
