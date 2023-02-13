@@ -17,7 +17,6 @@ public class CarToCarDAO implements Converter<Car, CarDAO> {
     @Override
     public CarDAO convert(Car car) {
         return new CarDAO(
-
                 car.getBrand(),
                 car.getModel(),
                 car.getCarType(),
@@ -25,6 +24,7 @@ public class CarToCarDAO implements Converter<Car, CarDAO> {
                 car.getGearboxType(),
                 car.getDoorNumber(),
                 car.getBootCapacity(),
+                car.getPricePerDay(),
                 conversionService.convert(car.getOffice(), OfficeDAO.class),
                 car.isDeleted(),
                 car.getUuid()

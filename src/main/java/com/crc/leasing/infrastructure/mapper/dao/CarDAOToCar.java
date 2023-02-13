@@ -26,6 +26,7 @@ public class CarDAOToCar implements Converter<CarDAO, Car> {
                 carDAO.getGearboxType(),
                 carDAO.getDoorNumber(),
                 carDAO.getBootCapacity(),
+                carDAO.getPricePerDay(),
                 conversionService.convert(carDAO.getOfficeDAO(), Office.class),
                 carDAO.isDeleted()
         );

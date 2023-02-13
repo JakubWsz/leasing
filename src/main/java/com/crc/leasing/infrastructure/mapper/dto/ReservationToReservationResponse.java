@@ -30,6 +30,7 @@ public class ReservationToReservationResponse implements Converter<Reservation, 
                 .endDate(reservation.getEndDate())
                 .loaner(conversionService.convert(reservation.getLoaner(), EmployeeResponse.class))
                 .receiver(conversionService.convert(reservation.getReceiver(), EmployeeResponse.class))
+                .price(reservation.getPrice())
                 .build();
     }
 }

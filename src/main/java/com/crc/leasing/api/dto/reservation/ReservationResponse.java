@@ -7,6 +7,7 @@ import com.crc.leasing.api.dto.office.OfficeResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -24,4 +25,5 @@ public class ReservationResponse {
     LocalDateTime endDate;
     EmployeeResponse loaner;
     EmployeeResponse receiver;
+    BigDecimal price;
 }

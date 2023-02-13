@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "car")
 @NoArgsConstructor
@@ -34,13 +36,15 @@ public class CarDAO extends BaseEntity {
     DoorNumber doorNumber;
     @Column(name = "boot_capacity")
     Double bootCapacity;
+    @Column(name = "price_per_day")
+    BigDecimal pricePerDay;
     @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "office_dao_id")
     OfficeDAO officeDAO;
 
     public CarDAO(String brand, String model, CarType carType, FuelType fuelType,
-                  GearboxType gearboxType, DoorNumber doorNumber, Double bootCapacity, OfficeDAO officeDAO,
-                  boolean deleted, String uuid) {
+                  GearboxType gearboxType, DoorNumber doorNumber, Double bootCapacity, BigDecimal pricePerDay,
+                  OfficeDAO officeDAO, boolean deleted, String uuid) {
         this.brand = brand;
         this.model = model;
         this.carType = carType;
@@ -48,6 +52,7 @@ public class CarDAO extends BaseEntity {
         this.gearboxType = gearboxType;
         this.doorNumber = doorNumber;
         this.bootCapacity = bootCapacity;
+        this.pricePerDay = pricePerDay;
         this.officeDAO = officeDAO;
         this.setDeleted(deleted);
         super.uuid = uuid;
