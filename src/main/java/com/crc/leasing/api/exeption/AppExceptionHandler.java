@@ -1,6 +1,6 @@
 package com.crc.leasing.api.exeption;
 
-import com.crc.leasing.domain.exception.DomainException;
+import com.crc.leasing.domain.exception.DateConflictException;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,9 +17,9 @@ import java.util.List;
 @ControllerAdvice
 @Slf4j
 public class AppExceptionHandler {
-    @ExceptionHandler(DomainException.class)
-    public ResponseEntity<Error> handleDomainException(DomainException exception) {
-        log.error("Domain exception occurred", exception);
+    @ExceptionHandler(DateConflictException.class)
+    public ResponseEntity<Error> handleDomainException(DateConflictException exception) {
+        log.error("DateConflictException occurred", exception);
         HttpStatus httpStatus = HttpStatus.valueOf(exception.getCode().getStatus());
         Error body = new Error(httpStatus.value(), exception.getMessage());
         return new ResponseEntity<>(body, httpStatus);

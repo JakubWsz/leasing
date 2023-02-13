@@ -8,6 +8,8 @@ import com.crc.leasing.infrastructure.database.jpa.car.entity.GearboxType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+
 @AllArgsConstructor
 @Builder
 @Getter
@@ -22,6 +24,7 @@ public class Car {
     GearboxType gearboxType;
     DoorNumber doorNumber;
     Double bootCapacity;
+    BigDecimal pricePerDay;
     Office office;
     boolean deleted;
 

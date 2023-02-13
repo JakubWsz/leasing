@@ -16,6 +16,7 @@ public class CarToCarResponse implements Converter<Car, CarResponse> {
                 .fuelType(car.getFuelType())
                 .gearboxType(car.getGearboxType())
                 .doorNumber(car.getDoorNumber())
+                .pricePerDay(car.getPricePerDay())
                 .bootCapacity(car.getBootCapacity())
                 .officeUuid(car.getOffice().getUuid())
                 .build();
