@@ -26,4 +26,13 @@ public class ReservationCommandHandler {
                 clientUuid, receiptOfficeUuid, restorationOfficeUuid, carUuid, start, end, loanerEmployeeUuid, receiverEmployeeUuid
         );
     }
+
+
+    public Mono<Reservation> handle(String uuid, String carUuid, String receiptOfficeUuid, String restorationOfficeUuid,
+                                    LocalDateTime start, LocalDateTime end
+    ) {
+        return reservationCommandService.updateReservation(
+                uuid, carUuid, receiptOfficeUuid, restorationOfficeUuid, start, end
+        );
+    }
 }

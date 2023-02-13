@@ -13,7 +13,7 @@ import java.util.Objects;
 @MappedSuperclass
 @ToString
 @Getter
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PROTECTED)
 public class BaseEntity {
     @Id
     @SequenceGenerator(name = "idGeneratorSeq", sequenceName = "idSequence")
@@ -22,12 +22,12 @@ public class BaseEntity {
     Long id;
 
     @Column(name = "uuid")
-    protected String uuid;
+    String uuid;
 
     @Column(name = "modification_date")
     LocalDateTime modificationDate;
 
-    @Column(name = "deleted",nullable = false)
+    @Column(name = "deleted", nullable = false)
     boolean deleted;
 
     public String getUuid() {

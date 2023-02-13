@@ -35,53 +35,52 @@ public class ReservationCommandService {
             String clientUuid, String receiptOfficeUuid, String restorationOfficeUuid, String carUuid,
             LocalDateTime start, LocalDateTime end, String loanerEmployeeUuid, String receiverEmployeeUuid
     ) {
-
-        // TODO: 04.02.2023 fix   validateRentDate(start, end, car);
+        Car car = getCar(carUuid);
+  //      validateRentDate(start, end, car);
 
         // TODO: 01.02.2023 stwórz metodę obliczającą cene wynajmu
         BigDecimal price = null;
         Reservation reservation = new Reservation(
                 UUID.randomUUID().toString(), getClient(clientUuid), getOffice(receiptOfficeUuid),
-                getOffice(restorationOfficeUuid), getCar(carUuid), start, end,
+                getOffice(restorationOfficeUuid), car, start, end,
                 getEmployee(loanerEmployeeUuid), getEmployee(receiverEmployeeUuid), price
         );
         return Mono.just(reservationCommand.save(reservation));
-
     }
 
-    private void validateRentDate(LocalDateTime start, LocalDateTime end, Car car) {
-        List<Reservation> reservations =
-                reservationQueryService.getReservationsByStartAndEndDatesAndCar(start, end, car);
-        for (Reservation reservation : reservations) {
-            if (dateComparator(start, reservation.startDate(), reservation.endDate())
-                    || dateComparator(end, reservation.startDate(), reservation.endDate())) {
-                throw new RuntimeException("Date conflict");
-            }
-        }
+    public Mono<Reservation> updateReservation(
+            String uuid, String carUuid, String receiptOfficeUuid, String restorationOfficeUuid,
+            LocalDateTime start, LocalDateTime end
+    ) {
+        // TODO: 01.02.2023 stwórz metodę aktualizującą cene wynajmu
+        BigDecimal price = null;
+
+        return Mono.just(
+                reservationCommand.update(uuid, carUuid, receiptOfficeUuid, restorationOfficeUuid, start, end, price)
+        );
     }
 
-    private boolean dateComparator(LocalDateTime date, LocalDateTime start, LocalDateTime finish) {
-        return start.compareTo(date) * date.compareTo(finish) > 0;
-    }
+//    private void validateRentDate(LocalDateTime start, LocalDateTime end, Car car) {
+//        List<Reservation> reservations =
+//                reservationQueryService.getReservationsByStartAndEndDatesAndCar(start, end, car);
+//        if (!reservations.isEmpty()) {
+//            throw new RuntimeException("Date conflict");
+//        }
+//    }
 
     private Client getClient(String uuid) {
-
-        Client carByUuid = clientQueryService.getCarByUuid(uuid);
-        return carByUuid;
+        return clientQueryService.getCarByUuid(uuid);
     }
 
     private Office getOffice(String uuid) {
-        Office officeByUuid = officeQueryService.getOfficeByUuid(uuid);
-        return officeByUuid;
+        return officeQueryService.getOfficeByUuid(uuid);
     }
 
     private Car getCar(String uuid) {
-        Car carByUuid = carQueryService.getCarByUuid(uuid);
-        return carByUuid;
+        return carQueryService.getCarByUuid(uuid);
     }
 
     private Employee getEmployee(String uuid) {
-        Employee employeeByUuid = employeeQueryService.getEmployeeByUuid(uuid);
-        return employeeByUuid;
+        return employeeQueryService.getEmployeeByUuid(uuid);
     }
 }

@@ -15,15 +15,19 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Car {
     final String uuid;
-    final String brand;
-    final String model;
-    final CarType carType;
-    final FuelType fuelType;
-    final GearboxType gearboxType;
-    final DoorNumber doorNumber;
-    final Double bootCapacity;
-    final Office office;
+    String brand;
+    String model;
+    CarType carType;
+    FuelType fuelType;
+    GearboxType gearboxType;
+    DoorNumber doorNumber;
+    Double bootCapacity;
+    Office office;
     boolean deleted;
+
+    public Car(String uuid) {
+        this.uuid = uuid;
+    }
 
     public void markAsDeleted() {
         deleted = true;
