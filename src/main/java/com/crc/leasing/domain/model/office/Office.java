@@ -11,10 +11,14 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Office {
     final String uuid;
-    final Address address;
-    final String websiteUrl;
-    final String officeCeo;
+    Address address;
+    String websiteUrl;
+    String officeCeo;
     boolean deleted;
+
+    public Office(String uuid) {
+        this.uuid = uuid;
+    }
 
     public void markAsDelete() {
         deleted = true;

@@ -62,6 +62,22 @@ public class ReservationDAO extends BaseEntity {
         super.uuid = uuid;
     }
 
+    public ReservationDAO(ClientDAO clientDAO, OfficeDAO receipt, OfficeDAO restoration, CarDAO carDAO,
+                          LocalDateTime startDate, LocalDateTime endDate, EmployeeDAO loaner, EmployeeDAO receiver,
+                          BigDecimal price, Long id, String uuid) {
+        this.clientDAO = clientDAO;
+        this.receipt = receipt;
+        this.restoration = restoration;
+        this.carDAO = carDAO;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.loaner = loaner;
+        this.receiver = receiver;
+        this.price = price;
+        super.id = id;
+        super.uuid = uuid;
+    }
+
     public void setClientDAO(ClientDAO clientDAO) {
         this.clientDAO = clientDAO;
     }

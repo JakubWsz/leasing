@@ -1,5 +1,6 @@
 package com.crc.leasing.infrastructure.database.jpa.reservation;
 
+import com.crc.leasing.domain.model.employee.Employee;
 import com.crc.leasing.domain.model.reservation.Reservation;
 import com.crc.leasing.domain.model.reservation.ReservationCommand;
 import com.crc.leasing.infrastructure.database.exception.DbExceptionCode;
@@ -21,12 +22,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 @Repository
 @RequiredArgsConstructor
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ReservationCommandAdapter implements ReservationCommand {
     ReservationCommandDAO reservationCommandDAO;
+    ReservationQueryDAO reservationQueryDAO;
     DaoMapper daoMapper;
     ConversionService conversionService;
     ClientQueryDAO clientQueryDAO;
@@ -51,6 +56,26 @@ public class ReservationCommandAdapter implements ReservationCommand {
 
         return reservation;
     }
+
+    @Override
+    public Reservation update(String uuid, String carUuid, String receiptOfficeUuid, String restorationOfficeUuid,
+                       LocalDateTime start, LocalDateTime end, BigDecimal price
+    ) {
+        OfficeDAO officeReceiptDAO = findOfficeDAOByUuid(receiptOfficeUuid);
+        OfficeDAO officeRestorationDAO = findOfficeDAOByUuid(restorationOfficeUuid);
+        CarDAO carDAO = findCarDAOByUuid(carUuid);
+
+        ReservationDAO fromDb = reservationQueryDAO.findByUuid(uuid)
+                .orElseThrow(DbExceptionCode.RESERVATION_NOT_EXIST::createException);
+
+        ReservationDAO reservationDAO = new ReservationDAO(fromDb.getClientDAO(),officeReceiptDAO,officeRestorationDAO,
+                carDAO,start,end,fromDb.getLoaner(),fromDb.getReceiver(),price,fromDb.getId(),fromDb.getUuid());
+        reservationCommandDAO.save(reservationDAO);
+
+        return conversionService.convert(reservationDAO,Reservation.class);
+
+    }
+
 
     private CarDAO findCarDAOByUuid(String uuid) {
         return carQueryDAO.findByUuid(uuid)

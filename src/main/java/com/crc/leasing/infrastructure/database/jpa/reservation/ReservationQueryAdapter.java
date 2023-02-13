@@ -3,11 +3,13 @@ package com.crc.leasing.infrastructure.database.jpa.reservation;
 import com.crc.leasing.domain.model.car.Car;
 import com.crc.leasing.domain.model.reservation.Reservation;
 import com.crc.leasing.domain.model.reservation.ReservationQuery;
+import com.crc.leasing.infrastructure.database.exception.DbExceptionCode;
 import com.crc.leasing.infrastructure.mapper.DaoMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -20,6 +22,7 @@ import java.util.List;
 public class ReservationQueryAdapter implements ReservationQuery {
     ReservationQueryDAO reservationQueryDAO;
     DaoMapper daoMapper;
+    ConversionService conversionService;
 
     @Override
     public List<Reservation> getReservationsByStartAndEndDatesAndCar(
@@ -30,12 +33,18 @@ public class ReservationQueryAdapter implements ReservationQuery {
 //                .stream()
 //                .map(daoMapper::mapToReservation)
 //                .toList();
-    return null;
+        return null;
     }
 
     @Override
     public List<LocalDateTime> getFreeDatesForCar(Car car) {
         return null;
 //                reservationQueryDAO.getFreeDatesForCar(daoMapper.mapToCarDAO(car));
+    }
+
+    @Override
+    public Reservation getReservationByUuid(String uuid) {
+        return conversionService.convert(reservationQueryDAO.findByUuid(uuid)
+                .orElseThrow(DbExceptionCode.RESERVATION_NOT_EXIST::createException), Reservation.class);
     }
 }

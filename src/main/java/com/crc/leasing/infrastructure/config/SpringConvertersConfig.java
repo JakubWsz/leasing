@@ -22,11 +22,14 @@ public class SpringConvertersConfig implements WebMvcConfigurer {
         registry.addConverter(new AddressToAddressDAO());
         registry.addConverter(new AddressDAOToAddress());
         registry.addConverter(new CarToCarDAO(conversionService));
+        registry.addConverter(new CarDAOToCar(conversionService));
         registry.addConverter(new ClientToClientDAO());
+        registry.addConverter(new ClientDAOToClient());
         registry.addConverter(new EmployeeToEmployeeDAO(conversionService));
         registry.addConverter(new EmployeeDAOToEmployee(conversionService));
         registry.addConverter(new OfficeToOfficeDAO(conversionService));
         registry.addConverter(new OfficeDAOToOffice(conversionService));
+        registry.addConverter(new ReservationDAOToReservation(conversionService));
         registry.addConverter(new ReservationToReservationDAO(conversionService));
 
         //DTO

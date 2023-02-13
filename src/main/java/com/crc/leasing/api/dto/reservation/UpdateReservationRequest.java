@@ -1,7 +1,9 @@
 package com.crc.leasing.api.dto.reservation;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -9,14 +11,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @ToString
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class ReservationRequest {
-    String clientUuid;
+public class UpdateReservationRequest {
+    String uuid;
     String receiptOfficeUuid;
     String restorationOfficeUuid;
     String carUuid;
     LocalDateTime start;
     LocalDateTime end;
-    String loanerEmployeeUuid;
-    String receiverEmployeeUuid;
 }
