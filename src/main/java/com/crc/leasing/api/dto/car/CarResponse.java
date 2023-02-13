@@ -10,6 +10,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -26,6 +28,7 @@ public class CarResponse {
     FuelType fuelType; @NotNull
     GearboxType gearboxType; @NotNull
     DoorNumber doorNumber;
+    BigDecimal pricePerDay;
     @NotNull
     double bootCapacity; @NotNull @NotEmpty @NotBlank
     String officeUuid;
