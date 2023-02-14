@@ -11,7 +11,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -56,32 +55,52 @@ public class ReservationCommandController {
     }
 
     private Mono<ResponseEntity<ReservationOrDatesResponse>> handleReservationOrDates(
-            Object reservationOrDates, Object request
+            final Object reservationOrDates, final Object request
     ) {
         if (reservationOrDates instanceof Reservation) {
-            ReservationResponse reservationResponse = dtoMapper.mapToReservationResponse(
-                    (Reservation) reservationOrDates);
-            ReservationOrDatesResponse response = new ReservationOrDatesResponse(reservationResponse);
-            log.info("{} reservation with uuid: '{}'",
-                    request instanceof ReservationRequest ? "created" : "updated",
-                    response.getReservationResponse().getUuid());
+            ReservationOrDatesResponse response = createReservationResponse((Reservation) reservationOrDates);
+            logReservation((Reservation) reservationOrDates, request);
             return Mono.just(ResponseEntity.ok(response));
         } else {
-            List<LocalDateTime> dates = ((List<?>) reservationOrDates).stream()
-                    .filter(LocalDateTime.class::isInstance)
-                    .map(date -> {
-                        try {
-                            return (LocalDateTime) date;
-                        } catch (ClassCastException e) {
-                            e.printStackTrace();
-                            return null;
-                        }
-                    })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-            ReservationOrDatesResponse response = new ReservationOrDatesResponse(dates);
-            log.info("dates conflict occurred, returned free dates instead");
+            List<LocalDateTime> dates = extractLocalDateTimes(reservationOrDates);
+            ReservationOrDatesResponse response = createDatesResponse(dates);
+            logDatesConflict();
             return Mono.just(ResponseEntity.ok(response));
         }
+    }
+
+    private ReservationOrDatesResponse createReservationResponse(final Reservation reservation) {
+        ReservationResponse reservationResponse = dtoMapper.mapToReservationResponse(reservation);
+        return new ReservationOrDatesResponse(reservationResponse);
+    }
+
+    private List<LocalDateTime> extractLocalDateTimes(final Object reservationOrDates) {
+        return ((List<?>) reservationOrDates).stream()
+                .filter(LocalDateTime.class::isInstance)
+                .map(date -> {
+                    try {
+                        return (LocalDateTime) date;
+                    } catch (ClassCastException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    private ReservationOrDatesResponse createDatesResponse(final List<LocalDateTime> dates) {
+        return new ReservationOrDatesResponse(dates);
+    }
+
+    private void logReservation(final Reservation reservation, final Object request) {
+        String logMessage = String.format("%s reservation with uuid: '%s'",
+                request instanceof ReservationRequest ? "created" : "updated",
+                reservation.getUuid());
+        log.info(logMessage);
+    }
+
+    private void logDatesConflict() {
+        log.info("dates conflict occurred, returned free dates instead");
     }
 }
