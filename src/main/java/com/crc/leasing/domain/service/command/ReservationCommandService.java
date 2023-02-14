@@ -3,11 +3,13 @@ package com.crc.leasing.domain.service.command;
 import com.crc.leasing.domain.exception.DomainExceptionCode;
 import com.crc.leasing.domain.model.car.Car;
 import com.crc.leasing.domain.model.client.Client;
-import com.crc.leasing.domain.model.employee.Employee;
 import com.crc.leasing.domain.model.office.Office;
 import com.crc.leasing.domain.model.reservation.Reservation;
 import com.crc.leasing.domain.model.reservation.ReservationCommand;
-import com.crc.leasing.domain.service.query.*;
+import com.crc.leasing.domain.service.query.CarQueryService;
+import com.crc.leasing.domain.service.query.ClientQueryService;
+import com.crc.leasing.domain.service.query.OfficeQueryService;
+import com.crc.leasing.domain.service.query.ReservationQueryService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -18,9 +20,11 @@ import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -31,12 +35,11 @@ public class ReservationCommandService {
     ReservationQueryService reservationQueryService;
     ClientQueryService clientQueryService;
     CarQueryService carQueryService;
-    EmployeeQueryService employeeQueryService;
     OfficeQueryService officeQueryService;
 
     public Mono<?> createReservationOrFreeDates(
             String clientUuid, String receiptOfficeUuid, String restorationOfficeUuid, String carUuid,
-            LocalDateTime start, LocalDateTime end, String loanerEmployeeUuid, String receiverEmployeeUuid
+            LocalDateTime start, LocalDateTime end
     ) {
         Car car = getCar(carUuid);
         try {
@@ -46,8 +49,7 @@ public class ReservationCommandService {
 
             Reservation reservation = new Reservation(
                     UUID.randomUUID().toString(), getClient(clientUuid), getOffice(receiptOfficeUuid),
-                    getOffice(restorationOfficeUuid), car, start, end,
-                    getEmployee(loanerEmployeeUuid), getEmployee(receiverEmployeeUuid), price
+                    getOffice(restorationOfficeUuid), car, start, end, price
             );
             return Mono.just(reservationCommand.save(reservation));
         } catch (RuntimeException e) {
@@ -61,11 +63,11 @@ public class ReservationCommandService {
         Car car = getCar(carUuid);
         try {
             validateRentDate(start, end, car);
-
             BigDecimal price = calculateRentalPrice(start, end, car.getPricePerDay());
-
             return Mono.just(
-                    reservationCommand.update(uuid, carUuid, receiptOfficeUuid, restorationOfficeUuid, start, end, price)
+                    reservationCommand.update(
+                            uuid, carUuid, receiptOfficeUuid, restorationOfficeUuid, start, end, price
+                    )
             );
         } catch (RuntimeException e) {
             List<LocalDateTime> freeDates = getFreeRentDates(start, end, car);
@@ -82,36 +84,21 @@ public class ReservationCommandService {
     private List<LocalDateTime> getFreeRentDates(LocalDateTime start, LocalDateTime end, Car car) {
         List<Reservation> reservations =
                 reservationQueryService.getReservationsByStartAndEndDatesAndCar(start, end, car);
-        List<LocalDateTime> freeDates = new ArrayList<>();
-        LocalDateTime current = start;
-        while (current.isBefore(end)) {
-            boolean isReserved = false;
-            if (reservations != null) {
-                for (Reservation reservation : reservations) {
-                    if (current.isAfter(reservation.startDate()) && current.isBefore(reservation.endDate())) {
-                        isReserved = true;
-                        break;
-                    }
-                }
-            }
-            if (!isReserved) {
-                freeDates.add(current);
-            }
-            current = current.plusDays(1);
-        }
-        return freeDates;
+        return Stream.iterate(start, date -> date.plusDays(1))
+                .limit(ChronoUnit.DAYS.between(start, end))
+                .filter(date -> reservations.stream()
+                        .noneMatch(reservation -> date.isAfter(reservation.getStartDate())
+                                && date.isBefore(reservation.getEndDate())))
+                .collect(Collectors.toList());
     }
 
     private void validateRentDate(LocalDateTime start, LocalDateTime end, Car car) {
         List<Reservation> reservations =
                 reservationQueryService.getReservationsByStartAndEndDatesAndCar(start, end, car);
-        if (reservations != null) {
-            for (Reservation reservation : reservations) {
-                if (dateComparator(start, reservation.startDate(), reservation.endDate())
-                        || dateComparator(end, reservation.startDate(), reservation.endDate())) {
-                    throw DomainExceptionCode.DATE_CONFLICT.createDateConflictException();
-                }
-            }
+        if (reservations != null && reservations.stream().anyMatch(reservation ->
+                dateComparator(start, reservation.getStartDate(), reservation.getEndDate()) ||
+                        dateComparator(end, reservation.getStartDate(), reservation.getEndDate()))) {
+            throw DomainExceptionCode.DATE_CONFLICT.createDateConflictException();
         }
     }
 
@@ -131,7 +118,4 @@ public class ReservationCommandService {
         return carQueryService.getCarByUuid(uuid);
     }
 
-    private Employee getEmployee(String uuid) {
-        return employeeQueryService.getEmployeeByUuid(uuid);
-    }
 }

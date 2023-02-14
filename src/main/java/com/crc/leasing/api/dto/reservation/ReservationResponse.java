@@ -23,7 +23,5 @@ public class ReservationResponse {
     CarResponse car;
     LocalDateTime startDate;
     LocalDateTime endDate;
-    EmployeeResponse loaner;
-    EmployeeResponse receiver;
     BigDecimal price;
 }

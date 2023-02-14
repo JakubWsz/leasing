@@ -16,10 +16,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
-
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
+import org.mapstruct.factory.Mappers;
 
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
@@ -27,33 +24,8 @@ import java.util.Date;
 )
 public interface DaoMapper {
 
-//    @Mapping(target = "clientDAO", source = "client")
-//    @Mapping(target = "receipt", source = "receipt")
-//    @Mapping(target = "restoration", source = "restoration")
-//    @Mapping(target = "carDAO", source = "car")
-//    @Mapping(target = "loaner", source = "loaner")
-//    @Mapping(target = "receiver", source = "receiver")
-//    @Mapping(target = "id", ignore = true)
-//    @Mapping(target = "modificationDate", ignore = true)
-//    @Mapping(target = "deleted", constant = "false")
-//    ReservationDAO mapToReservationDAO(Reservation reservation);
-
-//    @Mapping(target = "client", source = "clientDAO")
-//    @Mapping(target = "car", source = "carDAO")
-//    Reservation mapToReservation(ReservationDAO save);
-
-    @Mapping(target = "address", source = "officeAddressDAO")
-    Office mapToOffice(OfficeDAO officeDAO);
-
-    @Mapping(source = "officeDAO", target = "office")
-    Car mapToCar(CarDAO carDAO);
-
-    Client mapToClient(ClientDAO clientDAO);
-
-    @Mapping(target = "streetAddress", source = "streetAddress")
-    @Mapping(target = "postalCode", source = "postalCode")
-    @Mapping(target = "cityName", source = "cityName")
-    Address mapToAddress(AddressDAO addressDAO);
+    @Mapping(target = "super.id", ignore = true)
+    Address mapTooAddress(AddressDAO addressDAO);
 
     @Mapping(target = "streetAddress", source = "streetAddress")
     @Mapping(target = "postalCode", source = "postalCode")
@@ -61,23 +33,40 @@ public interface DaoMapper {
     @Mapping(target = "deleted", ignore = true)
     AddressDAO mapToAddressDAO(Address address);
 
-//    @Mapping(source = "officeDAO", target = "office")
-//    Employee mapToEmployee(EmployeeDAO employeeDAO);
+    @Mapping(source = "officeAddressDAO", target = "address")
+    Office mapToOffice(OfficeDAO officeDAO);
 
-//    @Mapping(target = "id", ignore = true)
-//    @Mapping(target = "uuid", ignore = true)
-//    @Mapping(target = "modificationDate", ignore = true)
-//    @Mapping(target = "deleted", constant = "false")
-//    ClientDAO mapToClientDAO(Client client);
-//
-@Mapping(target = "officeAddressDAO", source = "address")
+    @Mapping(source = "address", target = "officeAddressDAO")
     OfficeDAO mapToOfficeDAO(Office office);
-//
-//
-@Mapping(source = "office", target = "officeDAO")
+
+    @Mapping(source = "officeDAO", target = "office")
+    Car mapToCar(CarDAO carDAO);
+
+    @Mapping(source = "office", target = "officeDAO")
     CarDAO mapToCarDAO(Car car);
-//
-//    EmployeeDAO mapToEmployeeDAO(Employee employee);
 
+    Client mapToClient(ClientDAO clientDAO);
 
+    ClientDAO mapToClientDAO(Client client);
+
+    @Mapping(source = "addressDAO", target = "address")
+    @Mapping(source = "officeDAO", target = "office")
+    Employee mapToEmployee(EmployeeDAO employeeDAO);
+
+    @Mapping(source = "address", target = "addressDAO")
+    @Mapping(source = "office", target = "officeDAO")
+    EmployeeDAO mapToEmployeeDAO(Employee employee);
+
+    @Mapping(source = "clientDAO", target = "client")
+    @Mapping(source = "carDAO", target = "car")
+    @Mapping(source = "receipt", target = "receipt")
+    @Mapping(source = "restoration", target = "restoration")
+    Reservation mapToReservation(ReservationDAO reservationDAO);
+
+    @Mapping(source = "client", target = "clientDAO")
+    @Mapping(source = "car", target = "carDAO")
+    @Mapping(source = "receipt", target = "receipt")
+    @Mapping(source = "restoration", target = "restoration")
+    @Mapping(target = "deleted", ignore = true)
+    ReservationDAO mapToReservationDAO(Reservation reservation);
 }

@@ -17,6 +17,4 @@ public class ReservationRequest {
     String carUuid;
     LocalDateTime start;
     LocalDateTime end;
-    String loanerEmployeeUuid;
-    String receiverEmployeeUuid;
 }
