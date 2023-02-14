@@ -18,18 +18,18 @@ import java.time.LocalDateTime;
 public class ReservationCommandHandler {
     ReservationCommandService reservationCommandService;
 
-    public Mono<?> handle(
+    public Mono<?> handleCreate(
             String clientUuid, String receiptOfficeUuid, String restorationOfficeUuid, String carUuid,
-            LocalDateTime start, LocalDateTime end, String loanerEmployeeUuid, String receiverEmployeeUuid
+            LocalDateTime start, LocalDateTime end
     ) {
         return reservationCommandService.createReservationOrFreeDates(
-                clientUuid, receiptOfficeUuid, restorationOfficeUuid, carUuid, start, end, loanerEmployeeUuid, receiverEmployeeUuid
+                clientUuid, receiptOfficeUuid, restorationOfficeUuid, carUuid, start, end
         );
     }
 
 
-    public Mono<?> handle(String uuid, String carUuid, String receiptOfficeUuid, String restorationOfficeUuid,
-                          LocalDateTime start, LocalDateTime end
+    public Mono<?> handleUpdate(String uuid, String carUuid, String receiptOfficeUuid, String restorationOfficeUuid,
+                                LocalDateTime start, LocalDateTime end
     ) {
         return reservationCommandService.updateReservationOrFreeDates(
                 uuid, carUuid, receiptOfficeUuid, restorationOfficeUuid, start, end

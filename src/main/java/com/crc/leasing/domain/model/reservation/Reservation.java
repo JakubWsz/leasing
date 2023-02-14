@@ -11,9 +11,17 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
-@RequiredArgsConstructor
+@Setter
+@AllArgsConstructor
+@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public record Reservation(String uuid, Client client, Office receipt, Office restoration, Car car,
-                          LocalDateTime startDate, LocalDateTime endDate, Employee loaner, Employee receiver,
-                          BigDecimal price) {
+public class Reservation {
+    String uuid;
+    Client client;
+    Office receipt;
+    Office restoration;
+    Car car;
+    LocalDateTime startDate;
+    LocalDateTime endDate;
+    BigDecimal price;
 }

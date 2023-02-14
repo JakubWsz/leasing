@@ -17,8 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/reservation")
@@ -29,25 +30,22 @@ public class ReservationCommandController {
 
     ReservationCommandHandler reservationCommandHandler;
     DtoMapper dtoMapper;
-    ConversionService conversionService;
 
     @PostMapping
     public Mono<ResponseEntity<ReservationOrDatesResponse>> createReservation(@RequestBody ReservationRequest request) {
-        return reservationCommandHandler.handle(
+        return reservationCommandHandler.handleCreate(
                 request.getClientUuid(),
                 request.getReceiptOfficeUuid(),
                 request.getRestorationOfficeUuid(),
                 request.getCarUuid(),
-                request.getStart(), request.getEnd(),
-                request.getLoanerEmployeeUuid(),
-                request.getReceiverEmployeeUuid()
+                request.getStart(), request.getEnd()
         ).flatMap(o -> handleReservationOrDates(o, request));
     }
 
     @PutMapping
-    public Mono<ResponseEntity<ReservationOrDatesResponse>> updateReservation(@RequestBody UpdateReservationRequest
-                                                                               request) {
-        return reservationCommandHandler.handle(
+    public Mono<ResponseEntity<ReservationOrDatesResponse>> updateReservation(
+            @RequestBody UpdateReservationRequest request) {
+        return reservationCommandHandler.handleUpdate(
                 request.getUuid(),
                 request.getCarUuid(),
                 request.getReceiptOfficeUuid(),
@@ -57,26 +55,30 @@ public class ReservationCommandController {
         ).flatMap(o -> handleReservationOrDates(o, request));
     }
 
-    private Mono<ResponseEntity<ReservationOrDatesResponse>> handleReservationOrDates(Object reservationOrDates,
-                                                                                      Object request) {
+    private Mono<ResponseEntity<ReservationOrDatesResponse>> handleReservationOrDates(
+            Object reservationOrDates, Object request
+    ) {
         if (reservationOrDates instanceof Reservation) {
-            ReservationResponse reservationResponse =
-                    conversionService.convert(reservationOrDates, ReservationResponse.class);
+            ReservationResponse reservationResponse = dtoMapper.mapToReservationResponse(
+                    (Reservation) reservationOrDates);
             ReservationOrDatesResponse response = new ReservationOrDatesResponse(reservationResponse);
-
-            if (request instanceof ReservationRequest) {
-                log.info("created reservation with uuid: '{}'", response.getReservationResponse().getUuid());
-            } else log.info("updated reservation with uuid: '{}'", response.getReservationResponse().getUuid());
-
+            log.info("{} reservation with uuid: '{}'",
+                    request instanceof ReservationRequest ? "created" : "updated",
+                    response.getReservationResponse().getUuid());
             return Mono.just(ResponseEntity.ok(response));
         } else {
-            List<?> list = (List<?>) reservationOrDates;
-            List<LocalDateTime> dates = new ArrayList<>();
-            for (Object obj : list) {
-                if (obj instanceof LocalDateTime) {
-                    dates.add((LocalDateTime) obj);
-                }
-            }
+            List<LocalDateTime> dates = ((List<?>) reservationOrDates).stream()
+                    .filter(LocalDateTime.class::isInstance)
+                    .map(date -> {
+                        try {
+                            return (LocalDateTime) date;
+                        } catch (ClassCastException e) {
+                            e.printStackTrace();
+                            return null;
+                        }
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
             ReservationOrDatesResponse response = new ReservationOrDatesResponse(dates);
             log.info("dates conflict occurred, returned free dates instead");
             return Mono.just(ResponseEntity.ok(response));

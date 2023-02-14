@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 @Table(name = "reservation")
 @NoArgsConstructor
 @Getter
+@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ReservationDAO extends BaseEntity {
 
@@ -37,69 +39,31 @@ public class ReservationDAO extends BaseEntity {
     LocalDateTime startDate;
     @Column(name = "end_date")
     LocalDateTime endDate;
-    @ManyToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "loaner_id")
-    EmployeeDAO loaner;
-    @ManyToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "receiver_id")
-    EmployeeDAO receiver;
-
     @Column(name = "price")
     BigDecimal price;
 
     public ReservationDAO(ClientDAO clientDAO, OfficeDAO receipt, OfficeDAO restoration, CarDAO carDAO,
-                          LocalDateTime startDate, LocalDateTime endDate, EmployeeDAO loaner, EmployeeDAO receiver,
-                          BigDecimal price, String uuid) {
+                          LocalDateTime startDate, LocalDateTime endDate, BigDecimal price, String uuid) {
         this.clientDAO = clientDAO;
         this.receipt = receipt;
         this.restoration = restoration;
         this.carDAO = carDAO;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.loaner = loaner;
-        this.receiver = receiver;
         this.price = price;
         super.uuid = uuid;
     }
 
     public ReservationDAO(ClientDAO clientDAO, OfficeDAO receipt, OfficeDAO restoration, CarDAO carDAO,
-                          LocalDateTime startDate, LocalDateTime endDate, EmployeeDAO loaner, EmployeeDAO receiver,
-                          BigDecimal price, Long id, String uuid) {
+                          LocalDateTime startDate, LocalDateTime endDate, BigDecimal price, Long id, String uuid) {
         this.clientDAO = clientDAO;
         this.receipt = receipt;
         this.restoration = restoration;
         this.carDAO = carDAO;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.loaner = loaner;
-        this.receiver = receiver;
         this.price = price;
         super.id = id;
         super.uuid = uuid;
     }
-
-    public void setClientDAO(ClientDAO clientDAO) {
-        this.clientDAO = clientDAO;
-    }
-
-    public void setReceipt(OfficeDAO receipt) {
-        this.receipt = receipt;
-    }
-
-    public void setRestoration(OfficeDAO restoration) {
-        this.restoration = restoration;
-    }
-
-    public void setCarDAO(CarDAO carDAO) {
-        this.carDAO = carDAO;
-    }
-
-    public void setLoaner(EmployeeDAO loaner) {
-        this.loaner = loaner;
-    }
-
-    public void setReceiver(EmployeeDAO receiver) {
-        this.receiver = receiver;
-    }
-
 }

@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.Hibernate;
 
@@ -17,6 +18,7 @@ import java.util.Objects;
 @Table(name = "client")
 @NoArgsConstructor
 @Getter
+@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ClientDAO extends BaseEntity {
     @Column(name = "firstname")

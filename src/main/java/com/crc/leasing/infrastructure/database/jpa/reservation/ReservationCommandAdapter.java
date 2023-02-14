@@ -1,11 +1,9 @@
 package com.crc.leasing.infrastructure.database.jpa.reservation;
 
-import com.crc.leasing.domain.model.employee.Employee;
 import com.crc.leasing.domain.model.reservation.Reservation;
 import com.crc.leasing.domain.model.reservation.ReservationCommand;
 import com.crc.leasing.infrastructure.database.exception.DbExceptionCode;
-import com.crc.leasing.infrastructure.database.jpa.AddressDAO;
-import com.crc.leasing.infrastructure.database.jpa.AddressQueryDAO;
+import com.crc.leasing.infrastructure.database.jpa.BaseEntity;
 import com.crc.leasing.infrastructure.database.jpa.car.CarQueryDAO;
 import com.crc.leasing.infrastructure.database.jpa.car.entity.CarDAO;
 import com.crc.leasing.infrastructure.database.jpa.client.ClientQueryDAO;
@@ -19,7 +17,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -33,25 +30,19 @@ public class ReservationCommandAdapter implements ReservationCommand {
     ReservationCommandDAO reservationCommandDAO;
     ReservationQueryDAO reservationQueryDAO;
     DaoMapper daoMapper;
-    ConversionService conversionService;
     ClientQueryDAO clientQueryDAO;
     CarQueryDAO carQueryDAO;
     EmployeeQueryDAO employeeQueryDAO;
     OfficeQueryDAO officeQueryDAO;
-    AddressQueryDAO addressQueryDAO;
 
     @Override
     public Reservation save(Reservation reservation) {
-        ClientDAO clientDAO = findClientDAOByUuid(reservation.getClient().getUuid());
-        OfficeDAO officeReceiptDAO = findOfficeDAOByUuid(reservation.receipt().getUuid());
-        OfficeDAO officeRestorationDAO = findOfficeDAOByUuid(reservation.restoration().getUuid());
-        CarDAO carDAO = findCarDAOByUuid(reservation.getCar().getUuid());
-        EmployeeDAO employeeLoanerDAO = findEmployeeDAOByUuid(reservation.getLoaner().getUuid());
-        EmployeeDAO employeeReceiverDAO = findEmployeeDAOByUuid(reservation.receiver().getUuid());
-
-        ReservationDAO reservationDAO = new ReservationDAO(clientDAO, officeReceiptDAO, officeRestorationDAO, carDAO,
-                reservation.startDate(), reservation.getEndDate(), employeeLoanerDAO, employeeReceiverDAO,
-                reservation.getPrice(), reservation.uuid());
+        ReservationDAO reservationDAO = new ReservationDAO(
+                findDAOByUuid(reservation.getClient().getUuid(), ClientDAO.class),
+                findDAOByUuid(reservation.getReceipt().getUuid(), OfficeDAO.class),
+                findDAOByUuid(reservation.getRestoration().getUuid(), OfficeDAO.class),
+                findDAOByUuid(reservation.getCar().getUuid(), CarDAO.class),
+                reservation.getStartDate(), reservation.getEndDate(), reservation.getPrice(), reservation.getUuid());
         reservationCommandDAO.save(reservationDAO);
 
         return reservation;
@@ -59,42 +50,40 @@ public class ReservationCommandAdapter implements ReservationCommand {
 
     @Override
     public Reservation update(String uuid, String carUuid, String receiptOfficeUuid, String restorationOfficeUuid,
-                       LocalDateTime start, LocalDateTime end, BigDecimal price
+                              LocalDateTime start, LocalDateTime end, BigDecimal price
     ) {
-        OfficeDAO officeReceiptDAO = findOfficeDAOByUuid(receiptOfficeUuid);
-        OfficeDAO officeRestorationDAO = findOfficeDAOByUuid(restorationOfficeUuid);
-        CarDAO carDAO = findCarDAOByUuid(carUuid);
-
         ReservationDAO fromDb = reservationQueryDAO.findByUuid(uuid)
                 .orElseThrow(DbExceptionCode.RESERVATION_NOT_EXIST::createException);
 
-        ReservationDAO reservationDAO = new ReservationDAO(fromDb.getClientDAO(),officeReceiptDAO,officeRestorationDAO,
-                carDAO,start,end,fromDb.getLoaner(),fromDb.getReceiver(),price,fromDb.getId(),fromDb.getUuid());
+        ReservationDAO reservationDAO = new ReservationDAO(
+                fromDb.getClientDAO(),
+                findDAOByUuid(receiptOfficeUuid, OfficeDAO.class),
+                findDAOByUuid(restorationOfficeUuid, OfficeDAO.class),
+                findDAOByUuid(carUuid, CarDAO.class),
+                start, end, price, fromDb.getId(), fromDb.getUuid());
         reservationCommandDAO.save(reservationDAO);
 
-        return conversionService.convert(reservationDAO,Reservation.class);
-
+        return daoMapper.mapToReservation(reservationDAO);
+//        return conversionService.convert(reservationDAO, Reservation.class);
     }
 
 
-    private CarDAO findCarDAOByUuid(String uuid) {
-        return carQueryDAO.findByUuid(uuid)
-                .orElseThrow(DbExceptionCode.CAR_NOT_EXISTS::createException);
-    }
-
-    private OfficeDAO findOfficeDAOByUuid(String uuid) {
-        return officeQueryDAO.findByUuid(uuid)
-                .orElseThrow(DbExceptionCode.OFFICE_NOT_EXISTS::createException);
-    }
-
-    private ClientDAO findClientDAOByUuid(String uuid) {
-        return clientQueryDAO.findByUuid(uuid)
-                .orElseThrow(DbExceptionCode.CLIENT_NOT_EXISTS::createException);
-    }
-
-    private EmployeeDAO findEmployeeDAOByUuid(String uuid) {
-        return employeeQueryDAO.findByUuid(uuid)
-                .orElseThrow(DbExceptionCode.EMPLOYEE_NOT_EXISTS::createException);
+    private <T extends BaseEntity> T findDAOByUuid(String uuid, Class<T> daoClass) {
+        if (daoClass.equals(CarDAO.class)) {
+            return daoClass.cast(carQueryDAO.findByUuid(uuid)
+                    .orElseThrow(DbExceptionCode.CAR_NOT_EXISTS::createException));
+        } else if (daoClass.equals(OfficeDAO.class)) {
+            return daoClass.cast(officeQueryDAO.findByUuid(uuid)
+                    .orElseThrow(DbExceptionCode.OFFICE_NOT_EXISTS::createException));
+        } else if (daoClass.equals(ClientDAO.class)) {
+            return daoClass.cast(clientQueryDAO.findByUuid(uuid)
+                    .orElseThrow(DbExceptionCode.CLIENT_NOT_EXISTS::createException));
+        } else if (daoClass.equals(EmployeeDAO.class)) {
+            return daoClass.cast(employeeQueryDAO.findByUuid(uuid)
+                    .orElseThrow(DbExceptionCode.EMPLOYEE_NOT_EXISTS::createException));
+        } else {
+            throw new IllegalArgumentException("Unknown DAO class: " + daoClass);
+        }
     }
 
 }

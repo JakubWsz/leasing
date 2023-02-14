@@ -24,7 +24,7 @@ public class EmployeeResponse {
     @NotNull @NotEmpty @NotBlank
     String lastname;
     @NotNull
-    AddressDto address;
+    AddressDto addressDto;
     @NotNull @NotEmpty @NotBlank
     String pesel;
     @NotNull @NotEmpty @NotBlank @Size(min = 26, max = 26)
