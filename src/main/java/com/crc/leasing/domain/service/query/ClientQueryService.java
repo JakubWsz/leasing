@@ -1,8 +1,7 @@
 package com.crc.leasing.domain.service.query;
 
-import com.crc.leasing.domain.model.car.CarQuery;
 import com.crc.leasing.domain.model.client.Client;
-import com.crc.leasing.domain.model.client.ClientQuery;
+import com.crc.leasing.domain.model.client.ClientQueryRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -14,9 +13,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ClientQueryService {
-    ClientQuery clientQuery;
+    ClientQueryRepository clientQueryRepository;
 
     public Client getCarByUuid(String uuid){
-        return clientQuery.getClientByUuid(uuid);
+        return clientQueryRepository.getClientByUuid(uuid);
     }
 }

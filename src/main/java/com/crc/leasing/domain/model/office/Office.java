@@ -1,6 +1,6 @@
 package com.crc.leasing.domain.model.office;
 
-import com.crc.leasing.domain.model.Address;
+import com.crc.leasing.domain.model.address.Address;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

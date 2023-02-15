@@ -1,7 +1,7 @@
 package com.crc.leasing.domain.service.query;
 
 import com.crc.leasing.domain.model.office.Office;
-import com.crc.leasing.domain.model.office.OfficeQuery;
+import com.crc.leasing.domain.model.office.OfficeQueryRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -17,17 +17,17 @@ import java.util.List;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class OfficeQueryService {
-    OfficeQuery officeQuery;
+    OfficeQueryRepository officeQueryRepository;
 
     public List<Office> getOffices() {
-        return officeQuery.getOffices();
+        return officeQueryRepository.getOffices();
     }
 
     public Page<Office> getOffices(Pageable pageable) {
-        return officeQuery.getOffices(pageable);
+        return officeQueryRepository.getOffices(pageable);
     }
 
     public Office getOfficeByUuid(String uuid) {
-        return officeQuery.findByUuid(uuid);
+        return officeQueryRepository.findByUuid(uuid);
     }
 }

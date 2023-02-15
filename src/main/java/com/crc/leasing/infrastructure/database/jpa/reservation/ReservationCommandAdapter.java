@@ -4,13 +4,13 @@ import com.crc.leasing.domain.model.reservation.Reservation;
 import com.crc.leasing.domain.model.reservation.ReservationCommand;
 import com.crc.leasing.infrastructure.database.exception.DbExceptionCode;
 import com.crc.leasing.infrastructure.database.jpa.BaseEntity;
-import com.crc.leasing.infrastructure.database.jpa.car.CarQueryDAO;
+import com.crc.leasing.infrastructure.database.jpa.car.CarQueryRepositoryDAO;
 import com.crc.leasing.infrastructure.database.jpa.car.entity.CarDAO;
-import com.crc.leasing.infrastructure.database.jpa.client.ClientQueryDAO;
+import com.crc.leasing.infrastructure.database.jpa.client.ClientQueryRepositoryDAO;
 import com.crc.leasing.infrastructure.database.jpa.client.entity.ClientDAO;
-import com.crc.leasing.infrastructure.database.jpa.employee.EmployeeQueryDAO;
+import com.crc.leasing.infrastructure.database.jpa.employee.EmployeeQueryRepositoryDAO;
 import com.crc.leasing.infrastructure.database.jpa.employee.entity.EmployeeDAO;
-import com.crc.leasing.infrastructure.database.jpa.office.OfficeQueryDAO;
+import com.crc.leasing.infrastructure.database.jpa.office.OfficeQueryRepositoryDAO;
 import com.crc.leasing.infrastructure.database.jpa.office.entity.OfficeDAO;
 import com.crc.leasing.infrastructure.mapper.DaoMapper;
 import lombok.AccessLevel;
@@ -27,13 +27,13 @@ import java.time.LocalDateTime;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ReservationCommandAdapter implements ReservationCommand {
-    ReservationCommandDAO reservationCommandDAO;
-    ReservationQueryDAO reservationQueryDAO;
+    ReservationCommandRepositoryDAO reservationCommandRepositoryDAO;
+    ReservationQueryRepositoryDAO reservationQueryRepositoryDAO;
     DaoMapper daoMapper;
-    ClientQueryDAO clientQueryDAO;
-    CarQueryDAO carQueryDAO;
-    EmployeeQueryDAO employeeQueryDAO;
-    OfficeQueryDAO officeQueryDAO;
+    ClientQueryRepositoryDAO clientQueryRepositoryDAO;
+    CarQueryRepositoryDAO carQueryRepositoryDAO;
+    EmployeeQueryRepositoryDAO employeeQueryRepositoryDAO;
+    OfficeQueryRepositoryDAO officeQueryRepositoryDAO;
 
     @Override
     public Reservation save(Reservation reservation) {
@@ -43,7 +43,7 @@ public class ReservationCommandAdapter implements ReservationCommand {
                 findDAOByUuid(reservation.getRestoration().getUuid(), OfficeDAO.class),
                 findDAOByUuid(reservation.getCar().getUuid(), CarDAO.class),
                 reservation.getStartDate(), reservation.getEndDate(), reservation.getPrice(), reservation.getUuid());
-        reservationCommandDAO.save(reservationDAO);
+        reservationCommandRepositoryDAO.save(reservationDAO);
 
         return reservation;
     }
@@ -52,7 +52,7 @@ public class ReservationCommandAdapter implements ReservationCommand {
     public Reservation update(String uuid, String carUuid, String receiptOfficeUuid, String restorationOfficeUuid,
                               LocalDateTime start, LocalDateTime end, BigDecimal price
     ) {
-        ReservationDAO fromDb = reservationQueryDAO.findByUuid(uuid)
+        ReservationDAO fromDb = reservationQueryRepositoryDAO.findByUuid(uuid)
                 .orElseThrow(DbExceptionCode.RESERVATION_NOT_EXIST::createException);
 
         ReservationDAO reservationDAO = new ReservationDAO(
@@ -61,7 +61,7 @@ public class ReservationCommandAdapter implements ReservationCommand {
                 findDAOByUuid(restorationOfficeUuid, OfficeDAO.class),
                 findDAOByUuid(carUuid, CarDAO.class),
                 start, end, price, fromDb.getId(), fromDb.getUuid());
-        reservationCommandDAO.save(reservationDAO);
+        reservationCommandRepositoryDAO.save(reservationDAO);
 
         return daoMapper.mapToReservation(reservationDAO);
 //        return conversionService.convert(reservationDAO, Reservation.class);
@@ -70,16 +70,16 @@ public class ReservationCommandAdapter implements ReservationCommand {
 
     private <T extends BaseEntity> T findDAOByUuid(String uuid, Class<T> daoClass) {
         if (daoClass.equals(CarDAO.class)) {
-            return daoClass.cast(carQueryDAO.findByUuid(uuid)
+            return daoClass.cast(carQueryRepositoryDAO.findByUuid(uuid)
                     .orElseThrow(DbExceptionCode.CAR_NOT_EXISTS::createException));
         } else if (daoClass.equals(OfficeDAO.class)) {
-            return daoClass.cast(officeQueryDAO.findByUuid(uuid)
+            return daoClass.cast(officeQueryRepositoryDAO.findByUuid(uuid)
                     .orElseThrow(DbExceptionCode.OFFICE_NOT_EXISTS::createException));
         } else if (daoClass.equals(ClientDAO.class)) {
-            return daoClass.cast(clientQueryDAO.findByUuid(uuid)
+            return daoClass.cast(clientQueryRepositoryDAO.findByUuid(uuid)
                     .orElseThrow(DbExceptionCode.CLIENT_NOT_EXISTS::createException));
         } else if (daoClass.equals(EmployeeDAO.class)) {
-            return daoClass.cast(employeeQueryDAO.findByUuid(uuid)
+            return daoClass.cast(employeeQueryRepositoryDAO.findByUuid(uuid)
                     .orElseThrow(DbExceptionCode.EMPLOYEE_NOT_EXISTS::createException));
         } else {
             throw new IllegalArgumentException("Unknown DAO class: " + daoClass);

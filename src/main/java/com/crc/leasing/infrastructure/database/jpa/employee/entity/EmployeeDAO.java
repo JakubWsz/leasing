@@ -1,6 +1,6 @@
 package com.crc.leasing.infrastructure.database.jpa.employee.entity;
 
-import com.crc.leasing.infrastructure.database.jpa.AddressDAO;
+import com.crc.leasing.infrastructure.database.jpa.address.AddressDAO;
 import com.crc.leasing.infrastructure.database.jpa.BaseEntity;
 import com.crc.leasing.infrastructure.database.jpa.office.entity.OfficeDAO;
 import jakarta.persistence.*;
