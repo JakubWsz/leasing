@@ -1,12 +1,12 @@
 package com.crc.leasing.infrastructure.mapper;
 
-import com.crc.leasing.domain.model.Address;
+import com.crc.leasing.domain.model.address.Address;
 import com.crc.leasing.domain.model.car.Car;
 import com.crc.leasing.domain.model.client.Client;
 import com.crc.leasing.domain.model.employee.Employee;
 import com.crc.leasing.domain.model.office.Office;
 import com.crc.leasing.domain.model.reservation.Reservation;
-import com.crc.leasing.infrastructure.database.jpa.AddressDAO;
+import com.crc.leasing.infrastructure.database.jpa.address.AddressDAO;
 import com.crc.leasing.infrastructure.database.jpa.car.entity.CarDAO;
 import com.crc.leasing.infrastructure.database.jpa.client.entity.ClientDAO;
 import com.crc.leasing.infrastructure.database.jpa.employee.entity.EmployeeDAO;
@@ -16,7 +16,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,

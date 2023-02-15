@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public interface OfficeQuery {
+public interface OfficeQueryRepository {
 
     List<Office> getOffices();
 

@@ -1,5 +1,6 @@
 package com.crc.leasing.domain.service.command;
 
+import com.crc.leasing.domain.exception.DateConflictException;
 import com.crc.leasing.domain.exception.DomainExceptionCode;
 import com.crc.leasing.domain.model.car.Car;
 import com.crc.leasing.domain.model.client.Client;
@@ -52,7 +53,7 @@ public class ReservationCommandService {
                     getOffice(restorationOfficeUuid), car, start, end, price
             );
             return Mono.just(reservationCommand.save(reservation));
-        } catch (RuntimeException e) {
+        } catch (DateConflictException e) {
             List<LocalDateTime> freeDates = getFreeRentDates(start, end, car);
             return Mono.just(freeDates);
         }
@@ -69,7 +70,7 @@ public class ReservationCommandService {
                             uuid, carUuid, receiptOfficeUuid, restorationOfficeUuid, start, end, price
                     )
             );
-        } catch (RuntimeException e) {
+        } catch (DateConflictException e) {
             List<LocalDateTime> freeDates = getFreeRentDates(start, end, car);
             return Mono.just(freeDates);
         }
@@ -86,7 +87,7 @@ public class ReservationCommandService {
                 reservationQueryService.getReservationsByStartAndEndDatesAndCar(start, end, car);
         return Stream.iterate(start, date -> date.plusDays(1))
                 .limit(ChronoUnit.DAYS.between(start, end))
-                .filter(date -> reservations.stream()
+                .filter(date -> reservations == null || reservations.stream()
                         .noneMatch(reservation -> date.isAfter(reservation.getStartDate())
                                 && date.isBefore(reservation.getEndDate())))
                 .collect(Collectors.toList());

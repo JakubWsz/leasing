@@ -1,6 +1,6 @@
 package com.crc.leasing.domain.model.employee;
 
-import com.crc.leasing.domain.model.Address;
+import com.crc.leasing.domain.model.address.Address;
 import com.crc.leasing.domain.model.office.Office;
 import com.crc.leasing.infrastructure.database.jpa.employee.entity.ContractType;
 import lombok.*;
