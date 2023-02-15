@@ -6,7 +6,7 @@ import com.crc.leasing.api.dto.client.ClientResponse;
 import com.crc.leasing.api.dto.employee.EmployeeResponse;
 import com.crc.leasing.api.dto.office.OfficeResponse;
 import com.crc.leasing.api.dto.reservation.ReservationResponse;
-import com.crc.leasing.domain.model.Address;
+import com.crc.leasing.domain.model.address.Address;
 import com.crc.leasing.domain.model.car.Car;
 import com.crc.leasing.domain.model.client.Client;
 import com.crc.leasing.domain.model.employee.Employee;

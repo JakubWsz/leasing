@@ -1,6 +1,6 @@
 package com.crc.leasing.domain.model.client;
 
-public interface ClientQuery {
+public interface ClientQueryRepository {
 
     Client getClientByUuid(String uuid);
 }

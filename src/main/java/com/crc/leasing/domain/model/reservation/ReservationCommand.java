@@ -1,7 +1,5 @@
 package com.crc.leasing.domain.model.reservation;
 
-import com.crc.leasing.domain.model.employee.Employee;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
