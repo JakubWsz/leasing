@@ -1,32 +1,27 @@
-package com.crc.leasing.api.controller.command;
+package com.crc.leasing.api.controller.query;
 
-import com.crc.leasing.api.dto.reservation.ReservationRequest;
 import com.crc.leasing.api.dto.reservation.ReservationResponse;
-import com.crc.leasing.api.dto.reservation.UpdateReservationRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import reactor.core.publisher.Mono;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
-class ReservationCommandControllerTest {
+class ReservationQueryControllerTest {
 
     @Autowired
     private WebTestClient webTestClient;
 
-    private static final String REVIEWS_URL = "/reservation";
-
+    private static final String RESERVATION_URL = "/reservation";
 
     @BeforeEach
     void setUp() {
@@ -64,6 +59,16 @@ class ReservationCommandControllerTest {
                             "id, uuid, modification_date, deleted, client_dao_id, receipt_id, restoration_id," +
                             " car_dao_id, start_date, end_date, price)" +
                             "VALUES (7, 'ggg', null, false, 5, 2, 2, 3, '2023-03-01', '2023-03-05', 500.00);");
+            statement.addBatch(
+                    "INSERT INTO reservation (" +
+                            "id, uuid, modification_date, deleted, client_dao_id, receipt_id, restoration_id," +
+                            " car_dao_id, start_date, end_date, price)" +
+                            "VALUES (8, 'hhh', null, false, 5, 2, 2, 3, '2023-03-01', '2023-03-05', 500.00);");
+            statement.addBatch(
+                    "INSERT INTO reservation (" +
+                            "id, uuid, modification_date, deleted, client_dao_id, receipt_id, restoration_id," +
+                            " car_dao_id, start_date, end_date, price)" +
+                            "VALUES (9, 'iii', null, false, 5, 2, 2, 3, '2023-03-01', '2023-03-05', 500.00);");
             statement.executeBatch();
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,40 +95,40 @@ class ReservationCommandControllerTest {
     }
 
     @Test
-    public void testCreateReservation() {
-        ReservationRequest reservationRequest = new ReservationRequest(
-                "eee",
-                "bbb",
-                "bbb",
-                "ccc",
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(2)
-        );
-
-        webTestClient.post()
-                .uri(REVIEWS_URL)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(Mono.just(reservationRequest), ReservationRequest.class)
+    void testGetReservationsByDateRange() {
+        LocalDate from = LocalDate.of(2023, 3, 1);
+        LocalDate to = LocalDate.of(2023, 3, 28);
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path(RESERVATION_URL)
+                        .queryParam("from", from)
+                        .queryParam("to", to)
+                        .build())
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(ReservationResponse.class);
+                .expectBodyList(ReservationResponse.class);
+    }
+
+
+    @Test
+    void testGetPagedReservationsByDateRangeIs200Status() {
+        LocalDate from = LocalDate.of(2023, 3, 1);
+        LocalDate to = LocalDate.of(2023, 3, 28);
+
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path(RESERVATION_URL + "/paged")
+                        .queryParam("from", from)
+                        .queryParam("to", to)
+                        .queryParam("page", 0)
+                        .queryParam("size", 10)
+                        .build())
+                .exchange()
+                .expectStatus().isOk();
     }
 
     @Test
-    public void testUpdateReservation() {
-        UpdateReservationRequest updateReservationRequest = new UpdateReservationRequest(
-                "ggg",
-                "bbb",
-                "fff",
-                "ccc",
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(7)
-        );
-
-        webTestClient.put()
-                .uri(REVIEWS_URL)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(Mono.just(updateReservationRequest), UpdateReservationRequest.class)
+    void testGetReservationByUuid() {
+        webTestClient.get()
+                .uri(RESERVATION_URL + "/ggg")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(ReservationResponse.class);

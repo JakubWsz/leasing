@@ -9,11 +9,14 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 @Slf4j
@@ -22,7 +25,6 @@ import java.util.List;
 public class ReservationQueryRepositoryAdapter implements ReservationQueryRepository {
     ReservationQueryRepositoryDAO reservationQueryRepositoryDAO;
     DaoMapper daoMapper;
-    ConversionService conversionService;
 
     @Override
     public List<Reservation> getReservationsByStartAndEndDatesAndCar(
@@ -43,8 +45,21 @@ public class ReservationQueryRepositoryAdapter implements ReservationQueryReposi
     }
 
     @Override
+    public List<Reservation> getReservationsByDateRange(LocalDate from, LocalDate to) {
+        return reservationQueryRepositoryDAO.findByStartDateBetweenAndDeletedFalse(from.atStartOfDay(), to.atStartOfDay()).stream()
+                .map(daoMapper::mapToReservation)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<Reservation> getPagedReservationsByDateRange(LocalDate from, LocalDate to, Pageable pageable) {
+        return reservationQueryRepositoryDAO.findByStartDateBetweenAndDeletedFalse(from.atStartOfDay(), to.atStartOfDay(), pageable)
+                .map(daoMapper::mapToReservation);
+    }
+
+    @Override
     public Reservation getReservationByUuid(String uuid) {
-        return conversionService.convert(reservationQueryRepositoryDAO.findByUuid(uuid)
-                .orElseThrow(DbExceptionCode.RESERVATION_NOT_EXIST::createException), Reservation.class);
+        return daoMapper.mapToReservation(reservationQueryRepositoryDAO.findByUuidAndDeletedFalse(uuid)
+                .orElseThrow(DbExceptionCode.RESERVATION_NOT_EXIST::createException));
     }
 }

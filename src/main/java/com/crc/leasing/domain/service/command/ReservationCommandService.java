@@ -76,6 +76,11 @@ public class ReservationCommandService {
         }
     }
 
+    public Mono<Void> deleteReservation(String uuid) {
+        reservationCommand.delete(uuid);
+        return Mono.empty();
+    }
+
     private BigDecimal calculateRentalPrice(LocalDateTime start, LocalDateTime end, BigDecimal pricePerDay) {
         Duration rentalDuration = Duration.between(start, end);
         long rentalDays = rentalDuration.toDays();
@@ -118,5 +123,4 @@ public class ReservationCommandService {
     private Car getCar(String uuid) {
         return carQueryService.getCarByUuid(uuid);
     }
-
 }

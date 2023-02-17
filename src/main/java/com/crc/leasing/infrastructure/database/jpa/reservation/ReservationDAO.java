@@ -3,7 +3,6 @@ package com.crc.leasing.infrastructure.database.jpa.reservation;
 import com.crc.leasing.infrastructure.database.jpa.BaseEntity;
 import com.crc.leasing.infrastructure.database.jpa.car.entity.CarDAO;
 import com.crc.leasing.infrastructure.database.jpa.client.entity.ClientDAO;
-import com.crc.leasing.infrastructure.database.jpa.employee.entity.EmployeeDAO;
 import com.crc.leasing.infrastructure.database.jpa.office.entity.OfficeDAO;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

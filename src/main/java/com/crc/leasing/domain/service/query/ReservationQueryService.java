@@ -7,8 +7,12 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,7 +33,15 @@ public class ReservationQueryService {
         return reservationQueryRepository.getFreeDatesForCar(car);
     }
 
-    public Reservation getReservationByUuid(String uuid) {
-        return reservationQueryRepository.getReservationByUuid(uuid);
+    public Mono<List<Reservation>> getReservationsByDateRange(LocalDate from, LocalDate to) {
+        return Mono.just(reservationQueryRepository.getReservationsByDateRange(from, to));
+    }
+
+    public Mono<Page<Reservation>> getPagedReservationsByDateRange(LocalDate from, LocalDate to, Pageable pageable) {
+        return Mono.just(reservationQueryRepository.getPagedReservationsByDateRange(from, to, pageable));
+    }
+
+    public Mono<Reservation> getReservationByUuid(String uuid) {
+        return Mono.just(reservationQueryRepository.getReservationByUuid(uuid));
     }
 }
