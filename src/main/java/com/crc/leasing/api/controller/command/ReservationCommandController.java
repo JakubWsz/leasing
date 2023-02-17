@@ -57,7 +57,7 @@ public class ReservationCommandController {
     @DeleteMapping("/{uuid}")
     public Mono<ResponseEntity<Void>> deleteReservation(@PathVariable String uuid) {
         return reservationCommandHandler.deleteHandler(uuid)
-                .then(Mono.just(ResponseEntity.noContent().build()));
+                .then(Mono.just(ResponseEntity.ok().build()));
     }
 
     private Mono<ResponseEntity<ReservationOrDatesResponse>> handleReservationOrDates(

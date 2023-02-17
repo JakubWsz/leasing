@@ -25,7 +25,7 @@ class ReservationCommandControllerTest {
     @Autowired
     private WebTestClient webTestClient;
 
-    private static final String REVIEWS_URL = "/reservation";
+    private static final String RESERVATION_URL = "/reservation";
 
 
     @BeforeEach
@@ -101,7 +101,7 @@ class ReservationCommandControllerTest {
         );
 
         webTestClient.post()
-                .uri(REVIEWS_URL)
+                .uri(RESERVATION_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just(reservationRequest), ReservationRequest.class)
                 .exchange()
@@ -121,11 +121,20 @@ class ReservationCommandControllerTest {
         );
 
         webTestClient.put()
-                .uri(REVIEWS_URL)
+                .uri(RESERVATION_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just(updateReservationRequest), UpdateReservationRequest.class)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(ReservationResponse.class);
+    }
+
+    @Test
+    public void testDeleteReservation() {
+        webTestClient.delete()
+                .uri(RESERVATION_URL + "/ggg")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Void.class);
     }
 }
