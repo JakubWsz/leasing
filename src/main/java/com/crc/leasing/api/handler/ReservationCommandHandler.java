@@ -1,17 +1,16 @@
 package com.crc.leasing.api.handler;
 
-import com.crc.leasing.domain.model.reservation.Reservation;
 import com.crc.leasing.domain.service.command.ReservationCommandService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
-@Repository
+@Component
 @Slf4j
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -33,5 +32,9 @@ public class ReservationCommandHandler {
         return reservationCommandService.updateReservationOrFreeDates(
                 uuid, carUuid, receiptOfficeUuid, restorationOfficeUuid, start, end
         );
+    }
+
+    public Mono<Void> deleteHandler(String uuid) {
+        return reservationCommandService.deleteReservation(uuid);
     }
 }

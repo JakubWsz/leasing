@@ -52,7 +52,7 @@ public class ReservationCommandAdapter implements ReservationCommand {
     public Reservation update(String uuid, String carUuid, String receiptOfficeUuid, String restorationOfficeUuid,
                               LocalDateTime start, LocalDateTime end, BigDecimal price
     ) {
-        ReservationDAO fromDb = reservationQueryRepositoryDAO.findByUuid(uuid)
+        ReservationDAO fromDb = reservationQueryRepositoryDAO.findByUuidAndDeletedFalse(uuid)
                 .orElseThrow(DbExceptionCode.RESERVATION_NOT_EXIST::createException);
 
         ReservationDAO reservationDAO = new ReservationDAO(
@@ -67,6 +67,13 @@ public class ReservationCommandAdapter implements ReservationCommand {
 //        return conversionService.convert(reservationDAO, Reservation.class);
     }
 
+    @Override
+    public void delete(String uuid) {
+        ReservationDAO reservationDAO = reservationQueryRepositoryDAO.findByUuidAndDeletedFalse(uuid)
+                .orElseThrow(DbExceptionCode.RESERVATION_NOT_EXIST::createException);
+        reservationDAO.setDeleted(true);
+        reservationCommandRepositoryDAO.save(reservationDAO);
+    }
 
     private <T extends BaseEntity> T findDAOByUuid(String uuid, Class<T> daoClass) {
         if (daoClass.equals(CarDAO.class)) {

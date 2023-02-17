@@ -54,6 +54,12 @@ public class ReservationCommandController {
         ).flatMap(o -> handleReservationOrDates(o, request));
     }
 
+    @DeleteMapping("/{uuid}")
+    public Mono<ResponseEntity<Void>> deleteReservation(@PathVariable String uuid) {
+        return reservationCommandHandler.deleteHandler(uuid)
+                .then(Mono.just(ResponseEntity.ok().build()));
+    }
+
     private Mono<ResponseEntity<ReservationOrDatesResponse>> handleReservationOrDates(
             final Object reservationOrDates, final Object request
     ) {

@@ -9,4 +9,6 @@ public interface ReservationCommand {
 
     Reservation update(String uuid, String carUuid, String receiptOfficeUuid, String restorationOfficeUuid,
                 LocalDateTime start, LocalDateTime end, BigDecimal price);
+
+    void delete(String uuid);
 }
