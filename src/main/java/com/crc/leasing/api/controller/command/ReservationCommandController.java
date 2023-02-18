@@ -31,7 +31,9 @@ public class ReservationCommandController {
     DtoMapper dtoMapper;
 
     @PostMapping
-    public Mono<ResponseEntity<ReservationOrDatesResponse>> createReservation(@RequestBody ReservationRequest request) {
+    public Mono<ResponseEntity<ReservationOrDatesResponse>> createReservation(
+            @RequestBody ReservationRequest request
+    ) {
         return reservationCommandHandler.handleCreate(
                 request.getClientUuid(),
                 request.getReceiptOfficeUuid(),
@@ -43,7 +45,8 @@ public class ReservationCommandController {
 
     @PutMapping
     public Mono<ResponseEntity<ReservationOrDatesResponse>> updateReservation(
-            @RequestBody UpdateReservationRequest request) {
+            @RequestBody UpdateReservationRequest request
+    ) {
         return reservationCommandHandler.handleUpdate(
                 request.getUuid(),
                 request.getCarUuid(),
@@ -57,6 +60,9 @@ public class ReservationCommandController {
     @DeleteMapping("/{uuid}")
     public Mono<ResponseEntity<Void>> deleteReservation(@PathVariable String uuid) {
         return reservationCommandHandler.deleteHandler(uuid)
+                .doOnSuccess(res -> {
+                    log.info("Deleted reservation with UUID: {}", uuid);
+                })
                 .then(Mono.just(ResponseEntity.ok().build()));
     }
 
